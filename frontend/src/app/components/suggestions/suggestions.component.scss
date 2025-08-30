@@ -1,0 +1,452 @@
+// Suggestions Container
+.suggestions-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+// Suggestions Header
+.suggestions-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-color);
+      
+      mat-icon {
+        color: var(--primary-color);
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+    
+    .refresh-button {
+      width: 32px;
+      height: 32px;
+      
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+  
+  .search-container {
+    .search-field {
+      width: 100%;
+      
+      .mat-form-field-outline {
+        border-radius: 20px;
+      }
+      
+      input {
+        padding: 8px 0;
+      }
+    }
+  }
+}
+
+// Category Filters
+.category-filters {
+  padding: 12px 16px;
+  background-color: var(--surface-color);
+  border-bottom: 1px solid var(--border-color);
+  overflow-x: auto;
+  
+  .category-chips {
+    display: flex;
+    gap: 8px;
+    min-width: max-content;
+    
+    mat-chip-listbox {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+    }
+    
+    mat-chip-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 16px;
+      transition: all 0.2s ease;
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+      
+      .category-count {
+        font-size: 11px;
+        opacity: 0.7;
+        font-weight: 400;
+      }
+      
+      &.mat-mdc-chip-selected {
+        background-color: var(--primary-color);
+        color: white;
+        
+        .category-count {
+          opacity: 0.9;
+        }
+      }
+      
+      &:hover:not(.mat-mdc-chip-disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      }
+    }
+  }
+}
+
+// Suggestions Content
+.suggestions-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  
+  &.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// Loading State
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 20px;
+  
+  p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+}
+
+// Suggestions Grid
+.suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Suggestion Card
+.suggestion-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  outline: none;
+  
+  &:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    border-color: var(--primary-color);
+    
+    .action-icon {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  &:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+  
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    
+    &:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: var(--border-color);
+    }
+  }
+  
+  // Suggestion Icon
+  .suggestion-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background-color: rgba(0,0,0,0.05);
+    
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      
+      &.category-weather { color: #ff9800; }
+      &.category-news { color: #2196f3; }
+      &.category-calendar { color: #4caf50; }
+      &.category-general { color: #9c27b0; }
+      &.category-voice { color: #f44336; }
+    }
+  }
+  
+  // Suggestion Content
+  .suggestion-content {
+    flex: 1;
+    min-width: 0;
+    
+    .suggestion-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-color);
+      line-height: 1.4;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+    
+    .suggestion-description {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.3;
+      word-break: break-word;
+    }
+  }
+  
+  // Suggestion Action
+  .suggestion-action {
+    flex-shrink: 0;
+    
+    .action-icon {
+      color: var(--primary-color);
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.2s ease;
+    }
+  }
+}
+
+// Empty State
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  
+  .empty-content {
+    text-align: center;
+    max-width: 300px;
+    
+    .empty-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+    
+    h4 {
+      margin: 0 0 8px 0;
+      color: var(--text-color);
+      font-size: 16px;
+      font-weight: 500;
+    }
+    
+    p {
+      margin: 0 0 16px 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    
+    button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 auto;
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+}
+
+// Quick Actions
+.quick-actions {
+  padding: 16px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  
+  .quick-action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    
+    button {
+      transition: all 0.2s ease;
+      
+      &:hover:not([disabled]) {
+        transform: scale(1.1);
+      }
+      
+      &[disabled] {
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+// Dark Theme Support
+.dark-theme {
+  .suggestion-card .suggestion-icon {
+    background-color: rgba(255,255,255,0.05);
+  }
+  
+  .empty-state .empty-content .empty-icon {
+    color: var(--text-secondary);
+  }
+}
+
+// Animation for suggestion cards
+.suggestion-card {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .suggestions-header {
+    padding: 12px;
+    
+    .header-content {
+      margin-bottom: 12px;
+      
+      h3 {
+        font-size: 16px;
+        
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+    }
+  }
+  
+  .category-filters {
+    padding: 8px 12px;
+  }
+  
+  .suggestions-content {
+    padding: 12px;
+  }
+  
+  .suggestion-card {
+    padding: 12px;
+    
+    .suggestion-icon {
+      width: 36px;
+      height: 36px;
+      
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+    
+    .suggestion-content .suggestion-text {
+      font-size: 13px;
+    }
+  }
+  
+  .quick-actions {
+    padding: 12px;
+    
+    .quick-action-buttons {
+      gap: 8px;
+    }
+  }
+}
+
+// High Contrast Mode
+@media (prefers-contrast: high) {
+  .suggestion-card {
+    border-width: 2px;
+    
+    &:hover:not(.disabled) {
+      border-width: 2px;
+    }
+  }
+  
+  .category-filters mat-chip-option {
+    border: 1px solid var(--border-color);
+  }
+}
+
+// Reduced Motion Support
+@media (prefers-reduced-motion: reduce) {
+  .suggestion-card,
+  .category-filters mat-chip-option,
+  .quick-actions button {
+    transition: none;
+    animation: none;
+    
+    &:hover:not(.disabled) {
+      transform: none;
+    }
+  }
+  
+  .suggestion-card .action-icon {
+    opacity: 1;
+    transform: none;
+  }
+}

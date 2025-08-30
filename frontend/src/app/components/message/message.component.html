@@ -1,0 +1,76 @@
+<div class="message-container" [ngClass]="message.sender">
+  <!-- Message Bubble -->
+  <div [ngClass]="getMessageClass()" class="fade-in">
+    <!-- Avatar -->
+    <div class="message-avatar" *ngIf="message.sender === 'assistant'">
+      <mat-icon class="avatar-icon">smart_toy</mat-icon>
+    </div>
+
+    <!-- Message Content -->
+    <div class="message-content">
+      <!-- Message Header (for assistant messages) -->
+      <div class="message-header" *ngIf="message.sender === 'assistant'">
+        <span class="sender-name">AI Assistant</span>
+        <span class="message-timestamp">{{ formatTimestamp(message.timestamp) }}</span>
+      </div>
+
+      <!-- Message Text -->
+      <div class="message-text">
+        <ng-container *ngFor="let part of parseMessageContent()">
+          <!-- Text Content -->
+          <div *ngIf="part.type === 'text'" class="text-content" [innerHTML]="part.content"></div>
+          
+          <!-- Code Block -->
+          <div *ngIf="part.type === 'code'" class="code-block">
+            <div class="code-header">
+              <span class="language-label" *ngIf="part.language">{{ part.language }}</span>
+              <button mat-icon-button 
+                      class="copy-button" 
+                      (click)="copyCode(part.content)"
+                      matTooltip="Copy code">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+            </div>
+            <pre class="code-content"><code>{{ part.content }}</code></pre>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Message Actions (for assistant messages) -->
+      <div class="message-actions" *ngIf="message.sender === 'assistant'">
+        <button mat-icon-button 
+                matTooltip="Copy message"
+                (click)="copyCode(message.content)">
+          <mat-icon>content_copy</mat-icon>
+        </button>
+        <button mat-icon-button 
+                matTooltip="Read aloud"
+                (click)="$event.stopPropagation()">
+          <mat-icon>volume_up</mat-icon>
+        </button>
+      </div>
+
+      <!-- Message Status (for user messages) -->
+      <div class="message-status" *ngIf="message.sender === 'user'">
+        <mat-icon class="status-icon" [ngClass]="message.status">
+          {{ getStatusIcon() }}
+        </mat-icon>
+        <span class="message-timestamp">{{ formatTimestamp(message.timestamp) }}</span>
+      </div>
+    </div>
+
+    <!-- User Avatar -->
+    <div class="message-avatar user-avatar" *ngIf="message.sender === 'user'">
+      <span class="avatar-text">{{ getAvatarInitials() }}</span>
+    </div>
+  </div>
+
+  <!-- Typing Indicator (if this is a placeholder message) -->
+  <div class="typing-indicator" *ngIf="message.content === '...' && message.sender === 'assistant'">
+    <div class="typing-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>

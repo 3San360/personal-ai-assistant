@@ -1,0 +1,142 @@
+<div class="suggestions-container">
+  
+  <!-- Suggestions Header -->
+  <div class="suggestions-header">
+    <div class="header-content">
+      <h3>
+        <mat-icon>lightbulb</mat-icon>
+        Suggestions
+      </h3>
+      <button mat-icon-button 
+              (click)="refreshSuggestions()"
+              matTooltip="Refresh suggestions"
+              class="refresh-button">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+    
+    <!-- Search Bar -->
+    <div class="search-container">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search suggestions</mat-label>
+        <input matInput 
+               [value]="searchTerm"
+               (input)="onSearchInput($event.target.value)"
+               placeholder="Type to search...">
+        <mat-icon matPrefix>search</mat-icon>
+        <button mat-icon-button 
+                matSuffix 
+                *ngIf="searchTerm"
+                (click)="clearSearch()"
+                matTooltip="Clear search">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Category Filters -->
+  <div class="category-filters">
+    <div class="category-chips">
+      <mat-chip-listbox #chipList>
+        <mat-chip-option 
+          *ngFor="let category of categories; trackBy: trackByCategory"
+          [selected]="isCategoryActive(category.id)"
+          (click)="onCategorySelected(category.id)"
+          [disabled]="disabled">
+          <mat-icon>{{ category.icon }}</mat-icon>
+          {{ category.name }}
+          <span class="category-count">({{ getCategoryCount(category.id) }})</span>
+        </mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+  </div>
+
+  <!-- Suggestions List -->
+  <div class="suggestions-content" [ngClass]="{'loading': isLoading}">
+    
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <mat-spinner diameter="32"></mat-spinner>
+      <p>Loading suggestions...</p>
+    </div>
+
+    <!-- Suggestions Grid -->
+    <div class="suggestions-grid" *ngIf="!isLoading && filteredSuggestions.length > 0">
+      <div class="suggestion-card" 
+           *ngFor="let suggestion of filteredSuggestions; trackBy: trackBySuggestion"
+           [ngClass]="{'disabled': disabled}"
+           (click)="onSuggestionClick(suggestion)"
+           [matTooltip]="suggestion.description || suggestion.text"
+           tabindex="0"
+           role="button"
+           [attr.aria-label]="suggestion.text">
+        
+        <div class="suggestion-icon">
+          <mat-icon [ngClass]="'category-' + suggestion.category">
+            {{ getSuggestionIcon(suggestion) }}
+          </mat-icon>
+        </div>
+        
+        <div class="suggestion-content">
+          <div class="suggestion-text">{{ suggestion.text }}</div>
+          <div class="suggestion-description" *ngIf="suggestion.description">
+            {{ suggestion.description }}
+          </div>
+        </div>
+        
+        <div class="suggestion-action">
+          <mat-icon class="action-icon">send</mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && filteredSuggestions.length === 0">
+      <div class="empty-content">
+        <mat-icon class="empty-icon">search_off</mat-icon>
+        <h4>{{ getEmptyStateMessage() }}</h4>
+        <p *ngIf="searchTerm || selectedCategory !== 'all'">
+          Try adjusting your search or category filter.
+        </p>
+        <button mat-button 
+                color="primary"
+                (click)="clearSearch(); onCategorySelected('all')"
+                *ngIf="searchTerm || selectedCategory !== 'all'">
+          <mat-icon>clear_all</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions" *ngIf="!isLoading">
+    <div class="quick-action-buttons">
+      <button mat-mini-fab 
+              color="primary"
+              matTooltip="Voice input"
+              [disabled]="disabled"
+              (click)="onSuggestionClick({id: 'voice-quick', text: 'Start voice input', category: 'voice'})">
+        <mat-icon>mic</mat-icon>
+      </button>
+      
+      <button mat-mini-fab 
+              color="accent"
+              matTooltip="Quick weather"
+              [disabled]="disabled"
+              (click)="onSuggestionClick({id: 'weather-quick', text: 'Current weather', category: 'weather'})">
+        <mat-icon>wb_sunny</mat-icon>
+      </button>
+      
+      <button mat-mini-fab 
+              matTooltip="Latest news"
+              [disabled]="disabled"
+              (click)="onSuggestionClick({id: 'news-quick', text: 'Latest news', category: 'news'})">
+        <mat-icon>newspaper</mat-icon>
+      </button>
+    </div>
+  </div>
+
+</div>

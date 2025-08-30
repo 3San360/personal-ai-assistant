@@ -1,0 +1,98 @@
+<div class="voice-control-container" (keydown)="onKeyDown($event)" tabindex="0">
+  <!-- Voice Recording Button -->
+  <div class="voice-button-wrapper">
+    <button mat-fab 
+            [ngClass]="getRecordingButtonClass()"
+            [disabled]="!isSupported || disabled"
+            [matTooltip]="getRecordingTooltip()"
+            (click)="toggleRecording()"
+            [style]="getAudioLevelStyle()"
+            aria-label="Voice recording control">
+      
+      <!-- Recording Icon -->
+      <mat-icon [ngClass]="{'spinning': isProcessing}">
+        {{ getRecordingIcon() }}
+      </mat-icon>
+      
+      <!-- Audio Level Indicator -->
+      <div class="audio-level-ring" 
+           *ngIf="isRecording && audioLevel > 0"
+           [style.opacity]="audioLevel">
+      </div>
+      
+      <!-- Recording Pulse Animation -->
+      <div class="recording-pulse" *ngIf="isRecording"></div>
+    </button>
+    
+    <!-- Recording Timer -->
+    <div class="recording-timer" *ngIf="isRecording">
+      <mat-icon>radio_button_checked</mat-icon>
+      <span>Recording...</span>
+    </div>
+  </div>
+
+  <!-- Transcription Display -->
+  <div class="transcription-display" 
+       *ngIf="transcriptionText" 
+       [ngClass]="{'processing': isProcessing}">
+    <div class="transcription-content">
+      <mat-icon class="transcription-icon">hearing</mat-icon>
+      <span class="transcription-text">{{ transcriptionText }}</span>
+    </div>
+    
+    <!-- Processing Indicator -->
+    <div class="processing-indicator" *ngIf="isProcessing">
+      <mat-spinner diameter="16"></mat-spinner>
+    </div>
+  </div>
+
+  <!-- Error Display -->
+  <div class="error-display" *ngIf="errorMessage">
+    <mat-card class="error-card">
+      <div class="error-content">
+        <mat-icon class="error-icon">error</mat-icon>
+        <span class="error-text">{{ errorMessage }}</span>
+        <button mat-icon-button 
+                class="close-error" 
+                (click)="clearError()"
+                matTooltip="Dismiss error">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Voice Control Help -->
+  <div class="voice-help" *ngIf="!isSupported">
+    <mat-card class="help-card">
+      <mat-card-content>
+        <div class="help-content">
+          <mat-icon class="help-icon">help_outline</mat-icon>
+          <div class="help-text">
+            <p><strong>Voice recognition not available</strong></p>
+            <p>Please use a modern browser with microphone support.</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Keyboard Shortcuts Help -->
+  <div class="shortcuts-help" *ngIf="isSupported && !disabled">
+    <small class="shortcuts-text">
+      <mat-icon class="shortcut-icon">keyboard</mat-icon>
+      Press <kbd>Space</kbd> to toggle recording, <kbd>Esc</kbd> to stop
+    </small>
+  </div>
+
+  <!-- Audio Visualization -->
+  <div class="audio-visualization" *ngIf="isRecording">
+    <div class="audio-bars">
+      <div class="audio-bar" 
+           *ngFor="let bar of [1,2,3,4,5]" 
+           [style.height.%]="audioLevel * 100 * (Math.random() * 0.5 + 0.5)"
+           [style.animation-delay]="bar * 0.1 + 's'">
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,142 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--background-color);
+  color: var(--text-color);
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.app-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-left: 16px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.app-sidenav-container {
+  flex: 1;
+  display: flex;
+}
+
+.app-sidenav {
+  width: 280px;
+  padding: 16px 0;
+}
+
+.app-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.app-footer {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: rgba(0,0,0,0.05);
+  border-top: 1px solid rgba(0,0,0,0.1);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.version {
+  font-family: 'Courier New', monospace;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  
+  &::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f44336;
+  }
+  
+  &.online::before {
+    background: #4caf50;
+  }
+}
+
+.feature-status {
+  margin-left: auto;
+  font-size: 1rem;
+  color: #f44336;
+  
+  &.enabled {
+    color: #4caf50;
+  }
+}
+
+// Dark theme styles
+.dark-theme {
+  --background-color: #121212;
+  --surface-color: #1e1e1e;
+  --text-color: #ffffff;
+  --text-secondary: rgba(255,255,255,0.7);
+  
+  .app-footer {
+    background: rgba(255,255,255,0.05);
+    border-top-color: rgba(255,255,255,0.1);
+  }
+}
+
+// Light theme styles (default)
+:root {
+  --background-color: #fafafa;
+  --surface-color: #ffffff;
+  --text-color: #212121;
+  --text-secondary: rgba(0,0,0,0.6);
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .app-title {
+    font-size: 1rem;
+    margin-left: 8px;
+  }
+  
+  .app-sidenav {
+    width: 240px;
+  }
+  
+  .app-footer {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+}
+
+// Material overrides
+mat-toolbar {
+  transition: box-shadow 0.3s ease;
+}
+
+mat-nav-list {
+  padding-top: 0;
+}
+
+mat-list-item {
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: rgba(0,0,0,0.04);
+  }
+}
+
+.dark-theme mat-list-item:hover {
+  background-color: rgba(255,255,255,0.08);
+}

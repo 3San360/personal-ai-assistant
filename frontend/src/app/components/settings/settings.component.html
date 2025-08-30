@@ -1,0 +1,298 @@
+<div class="settings-container">
+  <div class="settings-header">
+    <h2>
+      <mat-icon>settings</mat-icon>
+      Settings
+    </h2>
+    <p>Customize your AI Assistant experience</p>
+  </div>
+
+  <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()" class="settings-form">
+    
+    <!-- Appearance Section -->
+    <mat-card class="settings-section">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>palette</mat-icon>
+          Appearance
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        
+        <!-- Theme Selection -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Theme</mat-label>
+            <mat-select formControlName="theme">
+              <mat-option value="light">
+                <mat-icon>light_mode</mat-icon>
+                Light
+              </mat-option>
+              <mat-option value="dark">
+                <mat-icon>dark_mode</mat-icon>
+                Dark
+              </mat-option>
+              <mat-option value="auto">
+                <mat-icon>brightness_auto</mat-icon>
+                Auto (System)
+              </mat-option>
+            </mat-select>
+            <mat-hint>Choose your preferred color theme</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Display Options -->
+        <div class="form-row">
+          <mat-checkbox formControlName="showTimestamps">
+            Show message timestamps
+          </mat-checkbox>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Voice & Audio Section -->
+    <mat-card class="settings-section">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>record_voice_over</mat-icon>
+          Voice & Audio
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        
+        <!-- Voice Enabled -->
+        <div class="form-row">
+          <mat-checkbox formControlName="voiceEnabled">
+            Enable voice input and output
+          </mat-checkbox>
+        </div>
+
+        <!-- Voice Settings (shown only if voice is enabled) -->
+        <div class="voice-settings" *ngIf="settingsForm.get('voiceEnabled')?.value">
+          
+          <!-- Voice Speed -->
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Voice Speed</mat-label>
+              <input matInput 
+                     type="number" 
+                     step="0.1" 
+                     min="0.1" 
+                     max="3"
+                     formControlName="voiceSpeed">
+              <mat-hint>0.1 (slow) to 3.0 (fast)</mat-hint>
+              <mat-error *ngIf="hasFieldError('voiceSpeed')">
+                {{ getFieldError('voiceSpeed') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Voice Pitch -->
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Voice Pitch</mat-label>
+              <input matInput 
+                     type="number" 
+                     step="0.1" 
+                     min="0" 
+                     max="2"
+                     formControlName="voicePitch">
+              <mat-hint>0.0 (low) to 2.0 (high)</mat-hint>
+              <mat-error *ngIf="hasFieldError('voicePitch')">
+                {{ getFieldError('voicePitch') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Test Voice Button -->
+          <div class="form-row">
+            <button mat-raised-button 
+                    type="button"
+                    color="accent"
+                    (click)="testVoice()"
+                    [disabled]="isLoading">
+              <mat-icon>play_arrow</mat-icon>
+              Test Voice
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Sound Effects -->
+        <div class="form-row">
+          <mat-checkbox formControlName="soundEffects">
+            Enable sound effects
+          </mat-checkbox>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Language & Localization Section -->
+    <mat-card class="settings-section">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>language</mat-icon>
+          Language & Localization
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        
+        <!-- Language Selection -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Language</mat-label>
+            <mat-select formControlName="language">
+              <mat-option *ngFor="let lang of availableLanguages" [value]="lang.code">
+                {{ lang.name }}
+              </mat-option>
+            </mat-select>
+            <mat-hint>Choose your preferred language for voice recognition</mat-hint>
+          </mat-form-field>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Behavior Section -->
+    <mat-card class="settings-section">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>psychology</mat-icon>
+          Behavior
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        
+        <!-- Auto Send -->
+        <div class="form-row">
+          <mat-checkbox formControlName="autoSend">
+            Auto-send voice messages
+          </mat-checkbox>
+          <small class="form-hint">
+            Automatically send messages after voice input without manual confirmation
+          </small>
+        </div>
+
+        <!-- Context Messages -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Context Messages</mat-label>
+            <input matInput 
+                   type="number" 
+                   min="1" 
+                   max="50"
+                   formControlName="maxContextMessages">
+            <mat-hint>Number of previous messages to include in context (1-50)</mat-hint>
+            <mat-error *ngIf="hasFieldError('maxContextMessages')">
+              {{ getFieldError('maxContextMessages') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- API Timeout -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>API Timeout (seconds)</mat-label>
+            <input matInput 
+                   type="number" 
+                   min="5" 
+                   max="120"
+                   formControlName="apiTimeout">
+            <mat-hint>Request timeout in seconds (5-120)</mat-hint>
+            <mat-error *ngIf="hasFieldError('apiTimeout')">
+              {{ getFieldError('apiTimeout') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Notifications Section -->
+    <mat-card class="settings-section">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>notifications</mat-icon>
+          Notifications
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        
+        <!-- Enable Notifications -->
+        <div class="form-row">
+          <mat-checkbox formControlName="notifications">
+            Enable browser notifications
+          </mat-checkbox>
+          <small class="form-hint">
+            Show notifications for important events and responses
+          </small>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Actions Section -->
+    <mat-card class="settings-section">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>save</mat-icon>
+          Actions
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button mat-raised-button 
+                  color="primary" 
+                  type="submit"
+                  [disabled]="isLoading || settingsForm.invalid">
+            <mat-icon>save</mat-icon>
+            Save Settings
+          </button>
+
+          <button mat-button 
+                  type="button"
+                  (click)="resetToDefaults()"
+                  [disabled]="isLoading">
+            <mat-icon>restore</mat-icon>
+            Reset to Defaults
+          </button>
+
+          <button mat-button 
+                  type="button"
+                  (click)="exportSettings()"
+                  [disabled]="isLoading">
+            <mat-icon>download</mat-icon>
+            Export Settings
+          </button>
+
+          <input #fileInput 
+                 type="file" 
+                 accept=".json"
+                 (change)="importSettings($event)"
+                 style="display: none;">
+          
+          <button mat-button 
+                  type="button"
+                  (click)="fileInput.click()"
+                  [disabled]="isLoading">
+            <mat-icon>upload</mat-icon>
+            Import Settings
+          </button>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+  </form>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Saving settings...</p>
+  </div>
+
+</div>
